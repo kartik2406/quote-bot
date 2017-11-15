@@ -63,6 +63,9 @@ public class MessageListFragment extends Fragment {
     // Date Uitl func
     MessageDateFormat messageDateFormat;
 
+    // min-max range
+    private static final int MIN = 1;
+    private static final int MAX = 100;
     private OnFragmentInteractionListener mListener;
 
     public MessageListFragment() {
@@ -122,33 +125,30 @@ public class MessageListFragment extends Fragment {
 
                 adapter.addMessage(new Message(userInput, getString(R.string.user), messageDateFormat.getFormattedDate()));
 
-                //make an api call
-                String url = BASE_URL + userInput;
 
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                        Request.Method.GET,
-                        url,
-                        null,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                              try{
-                                  adapter.addMessage(new Message( response.getString("quote"), getString(R.string.bot), messageDateFormat.getFormattedDate()));
-                              } catch (JSONException e){
-                                  Log.d("API failed", e.toString());
-                              }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
 
-                            }
-                        }
-                );
+                // split userInput to check if multiple values present
+                String[] quoteIds = userInput.split(" ");
 
-                requestQueue.add(jsonObjectRequest);
-              //  Toast.makeText(getActivity().getApplicationContext(), chatBox.getText().toString(), Toast.LENGTH_SHORT).show();
+                for(String id: quoteIds){
+                    int input = 0;
+                    try {
+                        input = Integer.parseInt(id);
+                    } catch (NumberFormatException e){
+                        Toast.makeText(getActivity().getApplicationContext(), "Input "+ id + " is invalid", Toast.LENGTH_SHORT).show();
+                        continue;
+                    }
+                    if(input < MIN || input > MAX){
+                        Toast.makeText(getContext(), "Enter number within range", Toast.LENGTH_LONG).show();
+                    } else {
+                        //make an api call
+                        String url = BASE_URL + id;
+                        callApi(url);
+                    }
+
+                }
+
+
             }
         });
 
@@ -160,6 +160,33 @@ public class MessageListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    private void callApi(String url){
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try{
+                            adapter.addMessage(new Message( response.getString("quote"), getString(R.string.bot), messageDateFormat.getFormattedDate()));
+                        } catch (JSONException e){
+                            Log.d("API failed", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+
+        requestQueue.add(jsonObjectRequest);
+
     }
     private List<Message> generateSimpleList() {
         List<Message> simpleViewModelList = new ArrayList<>();

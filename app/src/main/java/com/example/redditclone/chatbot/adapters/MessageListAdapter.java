@@ -19,6 +19,8 @@ import java.util.List;
 public class MessageListAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Message> messageList;
+    private static final String USER = "sender";
+    private  static final String BOT = "receiver";
 
     public MessageListAdapter(List<Message> messageList) {
         this.context = context;
@@ -43,7 +45,11 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.sent_message;
+        if(messageList.get(position).getUser().equalsIgnoreCase(USER)){
+            return R.layout.sent_message;
+        }
+        return R.layout.received_message;
+
     }
 
     public void addMessage(Message message){

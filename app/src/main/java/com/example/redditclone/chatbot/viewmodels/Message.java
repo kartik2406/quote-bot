@@ -6,10 +6,21 @@ package com.example.redditclone.chatbot.viewmodels;
 
 public class Message {
     String message;
-    long createdAt;
+    String user;
+    String timeStamp;
 
-    public Message(String message) {
+    public Message(String message, String user, String timeStamp) {
         this.message = message;
+        this.user = user;
+        this.timeStamp = timeStamp;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getMessage() {
@@ -18,5 +29,13 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.redditclone.chatbot.R;
 import com.example.redditclone.chatbot.adapters.MessageListAdapter;
+import com.example.redditclone.chatbot.utils.MessageDateFormat;
 import com.example.redditclone.chatbot.viewmodels.Message;
 
 import org.json.JSONException;
@@ -58,6 +59,9 @@ public class MessageListFragment extends Fragment {
 
     // Volley: RequestQueue.
     RequestQueue requestQueue;
+
+    // Date Uitl func
+    MessageDateFormat messageDateFormat;
 
     private OnFragmentInteractionListener mListener;
 
@@ -103,16 +107,23 @@ public class MessageListFragment extends Fragment {
 
         chatBox = (TextView) view.findViewById(R.id.edittext_chatbox);
 
+        messageDateFormat = MessageDateFormat.getInstance();
+
         sendButton = (Button) view.findViewById(R.id.button_chatbox_send);
         Log.d("Button", sendButton.toString());
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("Button", chatBox.getText().toString());
-                adapter.addMessage(new Message(chatBox.getText().toString()));
+                // retrive wha user entered in the textbox
+
+                String userInput = chatBox.getText().toString();
+                chatBox.setText("");
+
+                adapter.addMessage(new Message(userInput, getString(R.string.user), messageDateFormat.getFormattedDate()));
 
                 //make an api call
-                String url = BASE_URL + chatBox.getText().toString();
+                String url = BASE_URL + userInput;
 
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                         Request.Method.GET,
@@ -122,11 +133,10 @@ public class MessageListFragment extends Fragment {
                             @Override
                             public void onResponse(JSONObject response) {
                               try{
-                                  adapter.addMessage(new Message( response.getString("quote")));
+                                  adapter.addMessage(new Message( response.getString("quote"), getString(R.string.bot), messageDateFormat.getFormattedDate()));
                               } catch (JSONException e){
                                   Log.d("API failed", e.toString());
                               }
-
                             }
                         },
                         new Response.ErrorListener() {
@@ -155,7 +165,7 @@ public class MessageListFragment extends Fragment {
         List<Message> simpleViewModelList = new ArrayList<>();
 
         for (int i = 0; i < 1; i++) {
-            simpleViewModelList.add(new Message(new String("This is item " + i)));
+         //   simpleViewModelList.add(new Message(new String("This is item " + i)));
         }
         Log.d("Dummy size ", " " + simpleViewModelList.size());
         return simpleViewModelList;

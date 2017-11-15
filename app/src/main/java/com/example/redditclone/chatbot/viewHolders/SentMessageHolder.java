@@ -14,15 +14,18 @@ import com.example.redditclone.chatbot.viewmodels.Message;
  */
 
 public class SentMessageHolder extends RecyclerView.ViewHolder {
-    private TextView textView;
+    private TextView messageBody;
+    private TextView messageTime;
     public SentMessageHolder(final View sentMsgView) {
         super(sentMsgView);
         Log.d("SendMsgHolderConstructo", sentMsgView.toString());
-        textView = (TextView) sentMsgView.findViewById(R.id.text_message_body);
+        messageBody = (TextView) sentMsgView.findViewById(R.id.text_message_body);
+        messageTime = ( TextView ) sentMsgView.findViewById(R.id.text_message_time);
     }
 
     public void bindData(Message message) {
         Log.d("Bind Data", message.getMessage());
-        textView.setText(message.getMessage());
+        messageBody.setText(message.getMessage());
+        messageTime.setText(message.getTimeStamp());
     }
 }

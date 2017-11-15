@@ -20,7 +20,7 @@ import com.example.redditclone.chatbot.fragments.MessageListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MessageListFragment.OnFragmentInteractionListener {
-
+    Fragment onLaunchFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +37,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        onLaunchFragment = new MessageListFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, onLaunchFragment)
+                .commit();
     }
 
     @Override
